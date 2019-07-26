@@ -23,7 +23,7 @@ public class ProviderTest {
         config.addProvider(SimpleCRUD.class,new SimpleCRUDImpl());
         config.start();
         try {
-            Thread.sleep(10000);
+            Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
