@@ -10,6 +10,10 @@ public class LocalRegistryImpl  implements  Registry {
     private ConcurrentMap<String, TreeSet<String>> registerData  =new ConcurrentHashMap<>();
 
     @Override
+    public void init() {
+
+    }
+    @Override
     public boolean register(String key, TreeSet<String> set) {
         AssertUtil.isNull(key,"register interface info is not null");
         AssertUtil.isNull(set,"register impl class names is not null");
@@ -55,4 +59,5 @@ public class LocalRegistryImpl  implements  Registry {
 
         return true;
     }
+
 }

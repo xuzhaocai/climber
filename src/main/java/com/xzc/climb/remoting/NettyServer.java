@@ -1,5 +1,6 @@
 package com.xzc.climb.remoting;
 
+import com.xzc.climb.config.provider.ProviderConfig;
 import com.xzc.climb.serializer.Serializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -12,8 +13,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 public class NettyServer   extends   AbstractServer{
     private Thread thread;
-    private Serializer serializer ;
-    public void start(int port) {
+
+    public void start(int port, ProviderConfig config) {
+        this.config= config;
         thread= new Thread(()->{
             EventLoopGroup  boss= new NioEventLoopGroup(1);
             EventLoopGroup  worker= new NioEventLoopGroup();
@@ -25,27 +27,28 @@ public class NettyServer   extends   AbstractServer{
                         .childHandler(new ChannelInitializer<NioSocketChannel>() {
                             protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
                                 nioSocketChannel.pipeline()
-                                        .addLast(new NettyEncoder(serializer))
-                                        .addLast(new NettyDecoder(serializer,ClimberRequest.class))
-                                        .addLast(new NettyInvokerHandler());
-
+                                        .addLast(new NettyEncoder(config.getSerializer()))
+                                        .addLast(new NettyDecoder(config.getSerializer(),ClimberRequest.class))
+                                        .addLast(new NettyInvokerHandler(config));
                             }
                         });
                 ChannelFuture future = bootstrap.bind(port);
+                // 执行注册
+                doStart();
                 future.channel().closeFuture().sync();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
-
         thread.setDaemon(true);
         thread.start();
-
     }
+
 
     public void stop() {
         if (thread!=null && thread.isAlive()){
             thread.interrupt();
         }
+        onStop();
     }
 }

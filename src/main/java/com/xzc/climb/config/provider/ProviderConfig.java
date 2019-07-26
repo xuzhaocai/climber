@@ -15,6 +15,8 @@ import java.util.Map;
 
 public class ProviderConfig {
 
+
+
     protected Serializer serializer;
     protected Server server;
     protected Registry registry;
@@ -23,10 +25,13 @@ public class ProviderConfig {
     private Map<String,String> cacheMap = new HashMap<>();
     //缓存着 bean的  map
     private Map<String , Object>  beanMap = new HashMap<>();
+    public void addProvider(Class clazz,Object bean){
+        String name = clazz.getName();
+        beanMap.put(name,bean);
+    }
     //启动
     public void start(){
-
-        server.start(port);
+        server.start(port,this);
     }
     public  ClimberRespose  doInvoke(ClimberRequest request){
         ClimberRespose respose = new ClimberRespose();
@@ -68,4 +73,56 @@ public class ProviderConfig {
         respose.setResult(null);
         respose.setStateCode(500);
     }
+
+
+
+    public Serializer getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(Serializer serializer) {
+        this.serializer = serializer;
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
+    }
+
+    public Registry getRegistry() {
+        return registry;
+    }
+
+    public void setRegistry(Registry registry) {
+        this.registry = registry;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public Map<String, String> getCacheMap() {
+        return cacheMap;
+    }
+
+    public void setCacheMap(Map<String, String> cacheMap) {
+        this.cacheMap = cacheMap;
+    }
+
+    public Map<String, Object> getBeanMap() {
+        return beanMap;
+    }
+
+    public void setBeanMap(Map<String, Object> beanMap) {
+        this.beanMap = beanMap;
+    }
+
+
 }
