@@ -1,6 +1,8 @@
 package com.xzc.climb.config.provider;
 
 import com.xzc.climb.registry.Registry;
+import com.xzc.climb.remoting.ClimberRequest;
+import com.xzc.climb.remoting.ClimberRespose;
 import com.xzc.climb.remoting.Server;
 
 import java.util.HashMap;
@@ -9,11 +11,10 @@ import java.util.Map;
 public class ProviderConfig {
 
 
-    private Server server;
-    private Registry registry;
-    private String zkaddress;
-
-    private int port;
+    protected Server server;
+    protected Registry registry;
+    protected String zkaddress;
+    protected int port;
     // key : interface  value:  impl class
     private Map<String,String> cacheMap = new HashMap<>();
 
@@ -22,20 +23,6 @@ public class ProviderConfig {
     //启动
     public void start(){
 
-        //启动服务
         server.start(port);
-
-        //注册
-
-
-
     }
-
-    public void stop(){
-
-
-
-
-    }
-
 }
