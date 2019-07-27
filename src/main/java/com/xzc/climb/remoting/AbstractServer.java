@@ -16,6 +16,11 @@ public abstract class AbstractServer  implements  Server {
         Map<String, Object> beanMap = config.getBeanMap();
         String ipAndPort = CommonUtil.getHostAndPort(config.getPort());
         registerThread = new Thread(()->{
+            Set<String> keys = beanMap.keySet();
+            Registry registry = config.getRegistry();
+            for (String key : keys) {
+                registry.register(key, ipAndPort);
+            }
             while (!isStop) {
                 try {
                     Thread.sleep(10000);
@@ -23,8 +28,7 @@ public abstract class AbstractServer  implements  Server {
                     e.printStackTrace();
                 }
 
-                Set<String> keys = beanMap.keySet();
-                Registry registry = config.getRegistry();
+                keys = beanMap.keySet();
                 for (String key : keys) {
                     registry.register(key, ipAndPort);
                 }

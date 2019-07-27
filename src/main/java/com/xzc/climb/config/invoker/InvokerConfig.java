@@ -26,6 +26,10 @@ public class InvokerConfig {
     private ConcurrentMap<String ,TreeSet<String>> discoverMap = new ConcurrentHashMap<>();
 
     protected  InvokerConfig invokerConfig;
+    public  InvokerConfig(){
+        this.invokerConfig=this;
+    }
+
     public  Object getInvoker(Class clazz){
         return  Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{clazz}, new InvocationHandler() {
             @Override
@@ -36,15 +40,24 @@ public class InvokerConfig {
 
                 ClimberRequest request = new ClimberRequest();
                 request.setId(CommonUtil.getUUID());
+
+
                 request.setClassName(clazz.getName());
+
+
                 request.setMethodName(methodName);
                 request.setMethodParamsType(parameterTypes);
                 request.setMethodParamsValue(args);
                 String key = clazz.getName();
-                TreeSet<String>  ips = discoverMap.get(key);
+                TreeSet<String>  ips = registry.discover(key);
                 AssertUtil.isNullOrEmpty(ips,"not find provider");
 
                 String address = ips.first();
+
+
+
+
+
                 ClimberRespose respose= client.send(request, address, invokerConfig);
                 System.out.println(respose);
 
@@ -75,7 +88,7 @@ public class InvokerConfig {
 
     public void setRegistry(Registry registry) {
         this.registry = registry;
-        registry.init();
+
     }
 
     public Client getClient() {

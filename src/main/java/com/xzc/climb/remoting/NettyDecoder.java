@@ -16,7 +16,23 @@ public class NettyDecoder extends ByteToMessageDecoder {
     }
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
+
+
+
+        if (byteBuf.readableBytes() < 4) {
+            return;
+        }
+        byteBuf.markReaderIndex();
         int length = byteBuf.readInt();
+        if (length < 0) {
+            channelHandlerContext.close();
+        }
+        if (byteBuf.readableBytes() < length) {
+            byteBuf.resetReaderIndex();
+            return;
+        }
+
+
         byte[] bytes = new byte[length];
         byteBuf.readBytes(bytes);
         Object obj = serializer.decode(bytes, clazz);

@@ -2,6 +2,7 @@ package com.xzc.climb.registry;
 
 import com.xzc.climb.utils.AssertUtil;
 
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -9,10 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 public class LocalRegistryImpl  implements  Registry {
     private ConcurrentMap<String, TreeSet<String>> registerData  =new ConcurrentHashMap<>();
 
-    @Override
-    public void init() {
 
-    }
     @Override
     public boolean register(String key, TreeSet<String> set) {
         AssertUtil.isNull(key,"register interface info is not null");
@@ -41,6 +39,11 @@ public class LocalRegistryImpl  implements  Registry {
     public TreeSet<String> discover(String key) {
         AssertUtil.isNull(key,"register interface info is not null");
         return registerData.get(key);
+    }
+
+    @Override
+    public Map<String, TreeSet<String>> discover() {
+        return registerData;
     }
 
     @Override

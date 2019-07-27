@@ -8,30 +8,35 @@ import com.xzc.climb.remoting.NettyClient;
 import com.xzc.climb.remoting.NettyServer;
 import com.xzc.climb.serializer.KryoSerializer;
 
+import java.util.concurrent.locks.LockSupport;
+
 public class ProviderTest {
 
 
     public static void main(String[] args) {
 
-
+        LocalRegistryImpl localRegistry = new LocalRegistryImpl();
         ProviderConfig config =new ProviderConfig();
         config.setPort(9999);
         config.setSerializer(new KryoSerializer());
         config.setServer(new NettyServer());
-        config.setRegistry(new LocalRegistryImpl());
+        config.setRegistry(localRegistry);
 
         config.addProvider(SimpleCRUD.class,new SimpleCRUDImpl());
         config.start();
+
+
+
+
         try {
             Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         InvokerConfig invokerConfig = new InvokerConfig();
         invokerConfig.setSerializer(new KryoSerializer());
         invokerConfig.setClient(new NettyClient());
-        invokerConfig.setRegistry(new LocalRegistryImpl());
+        invokerConfig.setRegistry(localRegistry);
         SimpleCRUD simpleCRUD =(SimpleCRUD) invokerConfig.getInvoker(SimpleCRUD.class);
         String name = simpleCRUD.getName();
 

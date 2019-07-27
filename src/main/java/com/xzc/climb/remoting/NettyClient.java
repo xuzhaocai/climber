@@ -4,6 +4,7 @@ import com.xzc.climb.config.invoker.InvokerConfig;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -11,9 +12,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 public class NettyClient extends  AbstractClient {
 
-    public   Channel channel;
+    private  Channel channel;
 
-
+    private  EventLoopGroup group ;
 
     public ClimberRespose send(ClimberRequest request){
 
@@ -30,7 +31,7 @@ public class NettyClient extends  AbstractClient {
         String port= arr[1];
         NettyClientHandler nettyClientHandler = new NettyClientHandler();
         try {
-            EventLoopGroup group = new NioEventLoopGroup();
+            this.group = new NioEventLoopGroup();
             Bootstrap bootstrap =new Bootstrap();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
@@ -42,7 +43,10 @@ public class NettyClient extends  AbstractClient {
                                     .addLast(new NettyDecoder(config.getSerializer(),ClimberRespose.class))
                                     .addLast(nettyClientHandler);
                         }
-                    });
+                    })
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);
              this.channel = bootstrap.connect(ip, Integer.parseInt(port)).sync().channel();
              channel.writeAndFlush(request);
              respose  = nettyClientHandler.getRespose();

@@ -20,7 +20,11 @@ public class KryoSerializer  implements Serializer {
     private ThreadLocal<Kryo> threadLocal= new ThreadLocal<Kryo>(){
         @Override
         protected Kryo initialValue() {
-            return createKryo();
+            Kryo kryo = new Kryo();
+            kryo.setReferences(true);
+            kryo.setRegistrationRequired(false);
+
+            return kryo;
         }
     };
 
@@ -36,7 +40,7 @@ public class KryoSerializer  implements Serializer {
         try {
             kryo.writeObject(output, msg);
             output.flush();
-            byte[] bytes = output.toBytes();
+            byte[] bytes = outputStream.toByteArray();
             return bytes;
         }catch (Exception e){
             throw new ClimberException(e);
@@ -75,33 +79,9 @@ public class KryoSerializer  implements Serializer {
         }
 
     }
-    private  Kryo createKryo() {
-        Kryo kryo = new Kryo();
-        kryo.setReferences(true);
-        kryo.setRegistrationRequired(false);
-        kryo.register(HashMap.class);
-        kryo.register(ArrayList.class);
-        kryo.register(LinkedList.class);
-        kryo.register(HashSet.class);
-        kryo.register(TreeSet.class);
-        kryo.register(Hashtable.class);
-        kryo.register(Date.class);
-        kryo.register(Calendar.class);
-        kryo.register(ConcurrentHashMap.class);
-        kryo.register(SimpleDateFormat.class);
-        kryo.register(GregorianCalendar.class);
-        kryo.register(Vector.class);
-        kryo.register(BitSet.class);
-        kryo.register(StringBuffer.class);
-        kryo.register(StringBuilder.class);
-        kryo.register(Object.class);
-        kryo.register(Object[].class);
-        kryo.register(String[].class);
-        kryo.register(byte[].class);
-        kryo.register(char[].class);
-        kryo.register(int[].class);
-        kryo.register(float[].class);
-        kryo.register(double[].class);
-        return kryo;
-    }
+
+
+
+
+
 }
