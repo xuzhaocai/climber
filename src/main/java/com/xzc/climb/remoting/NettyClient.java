@@ -28,7 +28,7 @@ public class NettyClient extends  AbstractClient {
     private  ChannalNode  initClientChannal(String address){
         ChannalNode node  =new ChannalNode();
         String[] ipArr = CommonUtil.parseIPAndPort(address);
-        node.handler = new NettyClientHandler();
+        node.handler = new NettyClientHandler(config);
         try {
             node.group = new NioEventLoopGroup();
             Bootstrap bootstrap =new Bootstrap();
@@ -55,14 +55,13 @@ public class NettyClient extends  AbstractClient {
         return node;
     }
     @Override
-    public ClimberRespose send(ClimberRequest request, String address, InvokerConfig invokerConfig) {
+    public void send(ClimberRequest request, String address, InvokerConfig invokerConfig) {
         this.config = invokerConfig;
         ChannalNode channalNode = channals.get(address);
         if (channalNode==null){
             channalNode =initClientChannal(address);
         }
         channalNode.channel.writeAndFlush(request);
-        return channalNode.handler.get();
     }
 
     public static class ChannalNode{

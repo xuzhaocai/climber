@@ -4,8 +4,10 @@ import com.xzc.climb.registry.Registry;
 import com.xzc.climb.remoting.Client;
 import com.xzc.climb.remoting.ClimberRequest;
 import com.xzc.climb.remoting.ClimberRespose;
+import com.xzc.climb.remoting.ResposeFuture;
 import com.xzc.climb.serializer.Serializer;
 import com.xzc.climb.utils.AssertUtil;
+import com.xzc.climb.utils.ClimberException;
 import com.xzc.climb.utils.CommonUtil;
 import javafx.beans.binding.ObjectExpression;
 
@@ -16,19 +18,37 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 public class InvokerConfig {
 
     protected Serializer serializer;
     protected Registry registry;
-
     protected Client client;
-    private ConcurrentMap<String ,TreeSet<String>> discoverMap = new ConcurrentHashMap<>();
 
     protected  InvokerConfig invokerConfig;
     public  InvokerConfig(){
         this.invokerConfig=this;
     }
+    private  ConcurrentMap<String , ResposeFuture>  resposeFutures =new ConcurrentHashMap<>();
+    public void notifyResposeFuture(ClimberRespose respose){
+        if (respose==null||respose.getId()==null){
+            return;
+        }
+        ResposeFuture resposeFuture = resposeFutures.get(respose.getId());
+        resposeFuture.notifyResponse(respose);
+    }
+    public void setResposeFuture(String id, ResposeFuture resposeFuture){
+        resposeFutures.put(id,resposeFuture);
+    }
+    public void removeResposeFuture(String id){
+        resposeFutures.remove(id);
+    }
+
+
+
+
+
 
     public  Object getInvoker(Class clazz){
         return  Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{clazz}, new InvocationHandler() {
@@ -41,7 +61,6 @@ public class InvokerConfig {
                 ClimberRequest request = new ClimberRequest();
                 request.setId(CommonUtil.getUUID());
 
-
                 request.setClassName(clazz.getName());
 
 
@@ -51,21 +70,14 @@ public class InvokerConfig {
                 String key = clazz.getName();
                 TreeSet<String>  ips = registry.discover(key);
                 AssertUtil.isNullOrEmpty(ips,"not find provider");
-
                 String address = ips.first();
-
-
-
-
-
-                ClimberRespose respose= client.send(request, address, invokerConfig);
-                System.out.println(respose);
-
-                if(respose!=null){
-
-                    result= respose.getResult();
+                ResposeFuture resposeFuture  =new ResposeFuture(request,invokerConfig);
+                client.send(request, address, invokerConfig);
+                ClimberRespose respose = resposeFuture.get(100000, TimeUnit.MILLISECONDS);
+                if (respose.getStateCode()==500){
+                    throw  new ClimberException(respose.getExceptionInfo());
                 }
-                return result;
+                return respose.getResult();
             }
         });
 
@@ -97,13 +109,6 @@ public class InvokerConfig {
         this.client = client;
     }
 
-    public ConcurrentMap<String, TreeSet<String>> getDiscoverMap() {
-        return discoverMap;
-    }
-
-    public void setDiscoverMap(ConcurrentMap<String, TreeSet<String>> discoverMap) {
-        this.discoverMap = discoverMap;
-    }
 
     public InvokerConfig getInvokerConfig() {
         return invokerConfig;

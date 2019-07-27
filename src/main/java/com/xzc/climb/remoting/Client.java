@@ -9,5 +9,5 @@ public interface Client {
 
     ClimberRespose  send(ClimberRequest request);
 
-    ClimberRespose send(ClimberRequest request, String address, InvokerConfig invocationHandler);
+    void send(ClimberRequest request, String address, InvokerConfig invocationHandler);
 }
