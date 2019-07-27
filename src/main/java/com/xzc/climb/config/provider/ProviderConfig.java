@@ -32,10 +32,6 @@ public class ProviderConfig {
     //启动
     public void start(){
         server.start(port,this);
-
-
-
-
     }
     public  ClimberRespose  doInvoke(ClimberRequest request){
         ClimberRespose respose = new ClimberRespose();

@@ -24,6 +24,7 @@ public class NettyServer   extends   AbstractServer{
                 bootstrap.group(boss, worker)
                         .channel(NioServerSocketChannel.class)
                         .childOption(ChannelOption.SO_KEEPALIVE,true)
+                        .childOption(ChannelOption.TCP_NODELAY,true)
                         .childHandler(new ChannelInitializer<NioSocketChannel>() {
                             protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
                                 nioSocketChannel.pipeline()

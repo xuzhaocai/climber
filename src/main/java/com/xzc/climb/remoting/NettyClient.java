@@ -61,13 +61,15 @@ public class NettyClient extends  AbstractClient {
         if (channalNode==null){
             channalNode =initClientChannal(address);
         }
-        channalNode.channel.writeAndFlush(request);
+        Channel channel  = channalNode.channel;
+
+        channel.writeAndFlush(request);
     }
 
     public static class ChannalNode{
-        public  Channel channel;
-        public  EventLoopGroup group ;
-        public  NettyClientHandler handler;
+        private  Channel channel;
+        private  EventLoopGroup group ;
+        private  NettyClientHandler handler;
     }
 
 }
