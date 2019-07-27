@@ -65,8 +65,6 @@ public class InvokerConfig {
 
                     result= respose.getResult();
                 }
-
-
                 return result;
             }
         });

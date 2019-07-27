@@ -26,7 +26,16 @@ public class CommonUtil {
         }
         return "";
     }
-
+    public static String[] parseIPAndPort(String address){
+        if (isEmpty(address)){
+            throw  new ClimberException("address :  "+ address +" not null");
+        }
+        String[] arr = address.split(":");
+        if (arr.length!=2){
+            throw  new ClimberException("address :  "+ address +" can not  parse");
+        }
+        return arr;
+    }
     public static  String getHostAndPort(int port){
         return getIP()+":"+port;
     }

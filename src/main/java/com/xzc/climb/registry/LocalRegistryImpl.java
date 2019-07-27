@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class LocalRegistryImpl  implements  Registry {
     private ConcurrentMap<String, TreeSet<String>> registerData  =new ConcurrentHashMap<>();
-
+    
 
     @Override
     public boolean register(String key, TreeSet<String> set) {

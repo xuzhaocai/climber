@@ -14,7 +14,6 @@ public class ProviderTest {
 
 
     public static void main(String[] args) {
-
         LocalRegistryImpl localRegistry = new LocalRegistryImpl();
         ProviderConfig config =new ProviderConfig();
         config.setPort(9999);
@@ -24,10 +23,6 @@ public class ProviderTest {
 
         config.addProvider(SimpleCRUD.class,new SimpleCRUDImpl());
         config.start();
-
-
-
-
         try {
             Thread.sleep(20000);
         } catch (InterruptedException e) {
@@ -37,13 +32,33 @@ public class ProviderTest {
         invokerConfig.setSerializer(new KryoSerializer());
         invokerConfig.setClient(new NettyClient());
         invokerConfig.setRegistry(localRegistry);
-        SimpleCRUD simpleCRUD =(SimpleCRUD) invokerConfig.getInvoker(SimpleCRUD.class);
-        String name = simpleCRUD.getName();
 
+        SimpleCRUD simpleCRUD =(SimpleCRUD) invokerConfig.getInvoker(SimpleCRUD.class);
+
+
+        new Thread(()->{
+            String name = Thread.currentThread().getName();
+            while (true) {
+                System.out.println("thread:  " + name + "--->" + simpleCRUD.getName());
+
+            }
+        },"t1").start();
+
+
+
+        new Thread(()->{
+            String name = Thread.currentThread().getName();
+            while (true) {
+                System.out.println("thread:  " + name + "--->" + simpleCRUD.getAge());
+
+            }
+        },"t2").start();
         try {
             Thread.sleep(Integer.MAX_VALUE);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
+
 }
