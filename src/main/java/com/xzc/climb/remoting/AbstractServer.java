@@ -11,7 +11,7 @@ public abstract class AbstractServer  implements  Server {
     protected ProviderConfig config;
     protected  Thread registerThread;
     protected  volatile  boolean isStop;
-    void  doStart(){
+    public  void  doStart(){
         // 进行注册
         Map<String, Object> beanMap = config.getBeanMap();
         String ipAndPort = CommonUtil.getHostAndPort(config.getPort());
@@ -41,7 +41,7 @@ public abstract class AbstractServer  implements  Server {
         registerThread.setDaemon(true);
         registerThread.start();
     }
-    void  onStop(){
+    public void  onStop(){
         if (registerThread!=null && registerThread.isAlive()){
             registerThread.interrupt();
         }

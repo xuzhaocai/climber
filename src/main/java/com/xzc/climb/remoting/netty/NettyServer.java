@@ -1,7 +1,8 @@
-package com.xzc.climb.remoting;
+package com.xzc.climb.remoting.netty;
 
 import com.xzc.climb.config.provider.ProviderConfig;
-import com.xzc.climb.serializer.Serializer;
+import com.xzc.climb.remoting.AbstractServer;
+import com.xzc.climb.remoting.ClimberRequest;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,7 +12,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-public class NettyServer   extends   AbstractServer{
+public class NettyServer   extends AbstractServer {
     private Thread thread;
 
     public void start(int port, ProviderConfig config) {
@@ -29,7 +30,7 @@ public class NettyServer   extends   AbstractServer{
                             protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
                                 nioSocketChannel.pipeline()
                                         .addLast(new NettyEncoder(config.getSerializer()))
-                                        .addLast(new NettyDecoder(config.getSerializer(),ClimberRequest.class))
+                                        .addLast(new NettyDecoder(config.getSerializer(), ClimberRequest.class))
                                         .addLast(new NettyInvokerHandler(config));
                             }
                         });

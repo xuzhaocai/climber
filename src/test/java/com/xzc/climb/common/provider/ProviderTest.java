@@ -4,11 +4,9 @@ import com.xzc.climb.common.api.SimpleCRUD;
 import com.xzc.climb.config.invoker.InvokerConfig;
 import com.xzc.climb.config.provider.ProviderConfig;
 import com.xzc.climb.registry.LocalRegistryImpl;
-import com.xzc.climb.remoting.NettyClient;
-import com.xzc.climb.remoting.NettyServer;
+import com.xzc.climb.remoting.netty.NettyClient;
+import com.xzc.climb.remoting.netty.NettyServer;
 import com.xzc.climb.serializer.KryoSerializer;
-
-import java.util.concurrent.locks.LockSupport;
 
 public class ProviderTest {
 

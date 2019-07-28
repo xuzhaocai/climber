@@ -1,4 +1,4 @@
-package com.xzc.climb.remoting;
+package com.xzc.climb.remoting.netty;
 
 import com.xzc.climb.serializer.Serializer;
 import io.netty.buffer.ByteBuf;

@@ -1,6 +1,8 @@
-package com.xzc.climb.remoting;
+package com.xzc.climb.remoting.netty;
 
 import com.xzc.climb.config.provider.ProviderConfig;
+import com.xzc.climb.remoting.ClimberRequest;
+import com.xzc.climb.remoting.ClimberRespose;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
