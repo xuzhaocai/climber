@@ -28,7 +28,10 @@ public class ProviderConfig  implements Config {
         beanMap.put(name,bean);
     }
 
+    public void addProvider(String  type,Object bean){
 
+        beanMap.put(type,bean);
+    }
 
 
 
@@ -43,7 +46,7 @@ public class ProviderConfig  implements Config {
 
     @Override
     public void stop() {
-
+        //TODO
     }
 
     public  ClimberRespose  doInvoke(ClimberRequest request){

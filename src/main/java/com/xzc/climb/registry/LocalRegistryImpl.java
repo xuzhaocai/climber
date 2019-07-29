@@ -3,6 +3,7 @@ package com.xzc.climb.registry;
 import com.xzc.climb.utils.AssertUtil;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -42,7 +43,7 @@ public class LocalRegistryImpl  implements  Registry {
     }
 
     @Override
-    public Map<String, TreeSet<String>> discover() {
+    public Map<String, TreeSet<String>> discover(Set<String> keys) {
         return registerData;
     }
 

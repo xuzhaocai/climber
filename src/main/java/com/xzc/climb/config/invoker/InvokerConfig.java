@@ -30,7 +30,6 @@ public class InvokerConfig  implements Config {
     public  InvokerConfig(){
         this.invokerConfig=this;
     }
-
     @Override
     public void start(){
         checkParams();
@@ -60,12 +59,6 @@ public class InvokerConfig  implements Config {
     public void removeResposeFuture(String id){
         resposeFutures.remove(id);
     }
-
-
-
-
-
-
     public  Object getInvoker(Class clazz){
         return  Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{clazz}, new InvocationHandler() {
             @Override

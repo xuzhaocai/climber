@@ -13,17 +13,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class ZookeeperRegistryImpl  implements  Registry {
-    private String  address="127.0.0.1:2181";
-    private ZkHandler zkHandler;
-    public static  final ConcurrentMap<String , TreeSet<String>>  cacheMap = new ConcurrentHashMap<>();
+    private String  zkAddress;
 
-    public  ZookeeperRegistryImpl(){
+
+
+    private ZkHandler zkHandler;
+    public static  final ConcurrentMap<String , TreeSet<String>>  discoverMap= new ConcurrentHashMap<>();
+    public static  final  ConcurrentMap <String , TreeSet<String >> registerMap = new ConcurrentHashMap<>();
+    public  ZookeeperRegistryImpl(String zkAddress){
+        this.zkAddress= zkAddress;
         zkHandler = getZkHandler();
     }
 
     private ZkHandler getZkHandler() {
 
-        return new ZkHandler(address);
+        return new ZkHandler(zkAddress);
     }
 
     @Override
@@ -48,7 +52,7 @@ public class ZookeeperRegistryImpl  implements  Registry {
     }
 
     @Override
-    public Map<String, TreeSet<String>> discover() {
+    public Map<String, TreeSet<String>> discover(Set<String> keys) {
         return null;
     }
 
@@ -116,10 +120,6 @@ public class ZookeeperRegistryImpl  implements  Registry {
             }
             return false;
         }
-
-
-
-
     }
 
 
