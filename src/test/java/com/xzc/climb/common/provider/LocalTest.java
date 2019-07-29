@@ -8,7 +8,7 @@ import com.xzc.climb.remoting.netty.NettyClient;
 import com.xzc.climb.remoting.netty.NettyServer;
 import com.xzc.climb.serializer.KryoSerializer;
 
-public class ProviderTest {
+public class LocalTest {
 
 
     public static void main(String[] args) {

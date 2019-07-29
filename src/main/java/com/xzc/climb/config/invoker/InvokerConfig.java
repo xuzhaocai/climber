@@ -1,5 +1,6 @@
 package com.xzc.climb.config.invoker;
 
+import com.xzc.climb.config.Config;
 import com.xzc.climb.registry.Registry;
 import com.xzc.climb.remoting.Client;
 import com.xzc.climb.remoting.ClimberRequest;
@@ -20,15 +21,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-public class InvokerConfig {
+public class InvokerConfig  implements Config {
 
     protected Serializer serializer;
     protected Registry registry;
     protected Client client;
-
     protected  InvokerConfig invokerConfig;
     public  InvokerConfig(){
         this.invokerConfig=this;
+    }
+
+    @Override
+    public void start(){
+        checkParams();
+    }
+
+    @Override
+    public void stop() {
+
+    }
+
+    public  void  checkParams(){
+        AssertUtil.isNull(serializer,"serializer  can not null");
+        AssertUtil.isNull(serializer,"registry  can not null");
+        AssertUtil.isNull(serializer,"client  can not null");
     }
     private  ConcurrentMap<String , ResposeFuture>  resposeFutures =new ConcurrentHashMap<>();
     public void notifyResposeFuture(ClimberRespose respose){
@@ -57,13 +73,9 @@ public class InvokerConfig {
                 Object  result= null;
                 String methodName = method.getName();
                 Class<?>[] parameterTypes = method.getParameterTypes();
-
                 ClimberRequest request = new ClimberRequest();
                 request.setId(CommonUtil.getUUID());
-
                 request.setClassName(clazz.getName());
-
-
                 request.setMethodName(methodName);
                 request.setMethodParamsType(parameterTypes);
                 request.setMethodParamsValue(args);
@@ -71,9 +83,11 @@ public class InvokerConfig {
                 TreeSet<String>  ips = registry.discover(key);
                 AssertUtil.isNullOrEmpty(ips,"not find provider");
                 String address = ips.first();
+                long start = System.currentTimeMillis();
                 ResposeFuture resposeFuture  =new ResposeFuture(request,invokerConfig);
                 client.send(request, address, invokerConfig);
                 ClimberRespose respose = resposeFuture.get(100000, TimeUnit.MILLISECONDS);
+                System.out.println("耗时："+(System.currentTimeMillis()-start)+"ms");
                 if (respose.getStateCode()==500){
                     throw  new ClimberException(respose.getExceptionInfo());
                 }

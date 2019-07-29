@@ -1,5 +1,6 @@
 package com.xzc.climb.config.provider;
 
+import com.xzc.climb.config.Config;
 import com.xzc.climb.registry.Registry;
 import com.xzc.climb.remoting.ClimberRequest;
 import com.xzc.climb.remoting.ClimberRespose;
@@ -13,10 +14,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProviderConfig {
-
-
-
+public class ProviderConfig  implements Config {
     protected Serializer serializer;
     protected Server server;
     protected Registry registry;
@@ -29,10 +27,25 @@ public class ProviderConfig {
         String name = clazz.getName();
         beanMap.put(name,bean);
     }
-    //启动
+
+
+
+
+
+
+    @Override
     public void start(){
+        AssertUtil.isNull(serializer," serializer  can not null");
+        AssertUtil.isNull(server," server  can not null");
+        AssertUtil.isNull(registry," registry  can not null");
         server.start(port,this);
     }
+
+    @Override
+    public void stop() {
+
+    }
+
     public  ClimberRespose  doInvoke(ClimberRequest request){
         ClimberRespose respose = new ClimberRespose();
         AssertUtil.isNull(request ,"the requst info is not null");
@@ -42,12 +55,12 @@ public class ProviderConfig {
         String interfaceName = request.getClassName();
 
         if (CommonUtil.isEmpty(interfaceName)){
-            excetionInfoProcess(respose,"interface is not null");
+            exceptionInfoProcess(respose,"interface is not null");
             return respose;
         }
         Object o = beanMap.get(interfaceName);
         if (o==null){
-            excetionInfoProcess(respose,interfaceName+" impl bean not exist");
+            exceptionInfoProcess(respose,interfaceName+" impl bean not exist");
             return respose;
         }
         Class<?> clazz = o.getClass();
@@ -58,17 +71,17 @@ public class ProviderConfig {
             respose.setResult(result);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-            excetionInfoProcess(respose,"NoSuchMethodException");
+            exceptionInfoProcess(respose,"NoSuchMethodException");
         } catch (IllegalAccessException e) {
-            excetionInfoProcess(respose,"IllegalAccessException");
+            exceptionInfoProcess(respose,"IllegalAccessException");
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            excetionInfoProcess(respose,"InvocationTargetException");
+            exceptionInfoProcess(respose,"InvocationTargetException");
             e.printStackTrace();
         }
         return  respose;
     }
-    public void excetionInfoProcess(ClimberRespose respose ,String msg){
+    public void exceptionInfoProcess(ClimberRespose respose ,String msg){
         respose.setExceptionInfo(msg);
         respose.setResult(null);
         respose.setStateCode(500);
